@@ -5,9 +5,10 @@ import cv2
 import win32gui
 import pyautogui
 import numpy as np
+import pytesseract
 
 show_debug_cv2_frame = False
-
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def get_window_position():
     window = win32gui.GetForegroundWindow()
@@ -39,13 +40,12 @@ def start_recording():
             compressed_frame = cv2.resize(greyscale_frame, (128, 72))
 
             # Show the recording in a separate screen if needed (disabled for performance optimisation)
-            # cv2.imshow("SH", compressed_frame)
+            # cv2.imshow("SH", DEBUG_CUT_IMAGE)
 
             input_frame = np.array(compressed_frame)
             input_frame = np.reshape(input_frame, (1, 128, 72, 1))
 
             prediction = model.predict(input_frame)
-            print(prediction)
 
             # Input - Arrow keys
             input_handler.release_left()
@@ -81,16 +81,23 @@ def level_end_check(frame):
     res = cv2.matchTemplate(frame, end_game_template, cv2.TM_CCOEFF_NORMED)
     threshold = 0.8
     loc = np.where(res >= threshold)
-    print(len(loc[0]))
     if len(loc[0]) > 0:
         get_game_score(frame)
-        input_handler.press_space()
 
 
 def get_game_score(frame):
+    score_image = frame[158:200, 520:728]
+    score = get_text(score_image)
+    print(score)
+    input_handler.press_space()
     pass
 
 
+def get_text(image):
+    return pytesseract.image_to_string(image)
+
+
+high_score = 0.0
 fps = 15
 end_game_template = cv2.imread("template/end_screen.png")
 

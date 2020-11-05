@@ -34,5 +34,4 @@ def load_weights(model_name):
 
 def mutate_weights(model):
     base_weights = model.get_weights()
-    print(base_weights)
     pass
