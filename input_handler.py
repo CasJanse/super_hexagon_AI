@@ -20,6 +20,15 @@ def release_right():
     pyautogui.keyUp('right')
 
 
+def press_space():
+    pyautogui.keyDown("space")
+    release_space()
+
+
+def release_space():
+    pyautogui.keyUp("space")
+
+
 def set_key_events():
     add_key_events("q")
 

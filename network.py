@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Conv2D, Flatten, MaxPool2D, Dropout
 from keras.optimizers import Adam, SGD
@@ -14,16 +15,20 @@ def create_model():
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(2, activation="sigmoid"))
+    model.compile(loss="categorical_crossentropy", optimizer=Adam())
     mutate_weights(model)
     return model
 
 
-def save_weights(model, index):
+def save_weights(model):
+    dir = "model_weights"
+    index = len([name for name in os.listdir(dir) if os.path.isfile(os.path.join(dir, name))])
     model.save("model_weights/model_{}.h5".format(index))
 
 
 def load_weights(model_name):
     model = load_model("model_weights/{}.h5".format(model_name))
+    model.compile(loss="categorical_crossentropy", optimizer=Adam())
     return model
 
 

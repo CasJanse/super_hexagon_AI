@@ -45,8 +45,9 @@ def start_recording():
             input_frame = np.reshape(input_frame, (1, 128, 72, 1))
 
             prediction = model.predict(input_frame)
-            # print(prediction)
+            print(prediction)
 
+            # Input - Arrow keys
             input_handler.release_left()
             input_handler.release_right()
 
@@ -55,12 +56,15 @@ def start_recording():
             if prediction[0][1] > 0.6:
                 input_handler.press_right()
 
+            # Check if level has ended
+            level_end_check(frame)
+
             # Get the keys that are currently held down
             input_keys = input_handler.get_keys_pressed_down()
 
             # Stop the recording when the q key is pressed
             if (cv2.waitKey(1) & 0xFF == ord('q')) or "q" in input_keys:
-                network.save_weights(model, 0)
+                network.save_weights(model)
                 break
 
 
@@ -73,11 +77,29 @@ def take_screenshot():
     return frame, frame_timestamp
 
 
-model = network.create_model()
+def level_end_check(frame):
+    res = cv2.matchTemplate(frame, end_game_template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.8
+    loc = np.where(res >= threshold)
+    print(len(loc[0]))
+    if len(loc[0]) > 0:
+        get_game_score(frame)
+        input_handler.press_space()
+
+
+def get_game_score(frame):
+    pass
+
 
 fps = 15
+end_game_template = cv2.imread("template/end_screen.png")
+
+current_model_name = "model_0"
+# model = network.create_model()
+model = network.load_weights(current_model_name)
+
 
 time.sleep(2)
 window = get_window_position()
 
-# start_recording()
+start_recording()
