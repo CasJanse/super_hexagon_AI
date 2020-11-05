@@ -14,6 +14,7 @@ def create_model():
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(2, activation="sigmoid"))
+    mutate_weights(model)
     return model
 
 
@@ -24,3 +25,9 @@ def save_weights(model, index):
 def load_weights(model_name):
     model = load_model("model_weights/{}.h5".format(model_name))
     return model
+
+
+def mutate_weights(model):
+    base_weights = model.get_weights()
+    print(base_weights)
+    pass
