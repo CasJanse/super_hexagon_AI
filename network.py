@@ -20,10 +20,10 @@ def create_model():
     return model
 
 
-def save_weights(model):
+def save_weights(model, highest_score=0, average_score=0):
     dir = "model_weights"
     index = len([name for name in os.listdir(dir) if os.path.isfile(os.path.join(dir, name))])
-    model.save("model_weights/model_{}.h5".format(index))
+    model.save("model_weights/model_{}-{}-{}.h5".format(index, highest_score, average_score))
 
 
 def load_weights(model_name):
@@ -33,5 +33,6 @@ def load_weights(model_name):
 
 
 def mutate_weights(model):
-    base_weights = model.get_weights()
-    pass
+    base_weights = np.array(model.get_weights())
+    print(base_weights.shape)
+    return model
